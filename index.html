@@ -1,0 +1,386 @@
+<!DOCTYPE html><html lang="ja"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1"><title>miracl杯 進行表</title>
+<style>
+:root{--ink:#1a2332;--line:#d3dbe8;--head:#2b3a67;--accent:#e8407a;--rest:#9aa6bd;--bg:#f4f6fb;
+--w:#fdeef4;--wb:#e8407a;--m1:#e9f1ff;--m1b:#2f6fe0;--m2:#e8f7ee;--m2b:#1f9d57;}
+*{box-sizing:border-box;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+body{font-family:"Hiragino Sans","Yu Gothic",sans-serif;color:var(--ink);background:var(--bg);margin:0;padding:22px}
+.wrap{max-width:1000px;margin:0 auto}
+.title{text-align:center;margin:0 0 2px;font-size:34px;letter-spacing:2px;color:var(--head)}
+.title b{color:var(--accent)}
+.sub{text-align:center;color:var(--rest);margin:0 0 16px;font-size:14px}
+.card{background:#fff;border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin-bottom:20px;box-shadow:0 2px 10px rgba(40,60,110,.05)}
+h2{font-size:17px;margin:0 0 12px;padding-left:10px;border-left:5px solid var(--accent);color:var(--head)}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th,td{border:1px solid var(--line);padding:6px 5px;text-align:center}
+thead th{background:var(--head);color:#fff;font-weight:600;font-size:13px}
+.colA{background:var(--wb)!important}.colB{background:var(--m1b)!important}.colC{background:var(--m2b)!important}
+.slot{background:#eef2fb;color:var(--head);white-space:nowrap;font-weight:700;font-size:13px;min-width:88px}
+.time{background:#fafbfe;color:var(--head);font-weight:600;font-size:13px;white-space:nowrap}
+.mt{font-weight:600;min-width:120px;line-height:1.5}
+.mt .vs{color:#888;margin:0 5px;font-size:12px;font-weight:400}
+.cw{background:var(--w)}.cm1{background:var(--m1)}.cm2{background:var(--m2)}
+.mt.empty{color:var(--rest);font-weight:400;background:#fafbfe}
+.ref{font-size:11px;color:var(--rest);font-weight:500}
+.ref b{color:var(--head)}
+.ref.free{color:#c08;font-style:italic}
+.simrow .slot{background:#fde3ee}
+.badge{display:block;font-size:10px;color:#fff;background:var(--accent);border-radius:8px;padding:1px 4px;margin-top:3px}
+.note{font-size:12.5px;color:var(--rest);margin-top:8px;line-height:1.8}
+.legend{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;font-size:12.5px;margin:6px 0 16px}
+.legend span{display:inline-flex;align-items:center;gap:5px}
+.sw{width:14px;height:14px;border-radius:3px;display:inline-block}
+.star{table-layout:fixed}
+.star th,.star td{word-break:break-word;overflow-wrap:break-word;padding:4px 3px}
+.star .corner{width:12%}
+.star .tot,.star .rank{width:8%}
+.star td.gc{height:38px}.star .diag{background:#e7ebf3}.star .tot,.star .rank{background:#fbeef4;font-size:12px}
+.gh{background:var(--head);color:#fff;min-width:0;font-size:12.5px;line-height:1.3}
+.bar{text-align:center;margin-bottom:16px}
+.bar button{background:var(--head);color:#fff;border:0;border-radius:8px;padding:9px 16px;font-size:14px;cursor:pointer;margin:3px 4px}
+.cfg{display:flex;gap:18px;flex-wrap:wrap;justify-content:center;align-items:flex-end}
+.cfg label{display:block;font-size:12px;color:var(--rest);margin-bottom:3px;font-weight:600}
+.cfg input{font-size:15px;padding:6px 8px;border:1px solid var(--line);border-radius:6px;width:90px;text-align:center}
+.cfg .grp{text-align:center}
+/* ===== 印刷: A4・コート毎 ===== */
+#printpages{display:none}
+@page{size:A4 portrait;margin:11mm}
+@media print{
+ body{background:#fff;padding:0}
+ #screen{display:none}
+ #printpages{display:block}
+ .pp{page-break-after:always}
+ .pp:last-child{page-break-after:auto}
+ tr{page-break-inside:avoid}thead{display:table-header-group}
+ .pp-title{ text-align:center;margin-top:30mm}
+ .pp-title .t1{font-size:52px;font-weight:800;color:var(--head);letter-spacing:3px}
+ .pp-title .t1 b{color:var(--accent)}
+ .pp-title .t2{font-size:16px;color:var(--rest);margin:6px 0 16mm}
+ .pn-grid{display:flex;gap:10mm;justify-content:center}
+ .pn-head{font-size:18px;font-weight:800;border-bottom:3px solid;padding:0 4px 5px;margin-bottom:5mm;text-align:center}
+ .pn-row{display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--line);padding:3.6mm 3px}
+ .pn-no{font-size:15px;font-weight:800;width:22px;text-align:right}
+ .pn-name{font-size:15px;font-weight:600;min-width:42mm}
+ .cp-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:5mm;border-bottom:4px solid;padding-bottom:3mm}
+ .cp-court{font-size:26px;font-weight:800}
+ .cp-tour{font-size:15px;color:var(--rest);font-weight:600}
+ .pp table{font-size:13.5px}
+ .pp th,.pp td{padding:5px 6px}
+ .pp .ref{font-size:11px}
+ .pp .note{font-size:11px;line-height:1.6}
+ .star .gc{height:44px}
+}
+</style></head><body>
+<div class="wrap">
+<div id="screen">
+<h1 class="title"><b>miracl</b>杯</h1>
+<p class="sub">3コート進行表 ／ コートA=女子・コートB=混合①・コートC=混合②（チーム数自由）</p>
+
+<div class="card noprint">
+  <h2>⚙️ 大会設定（変えると自動で組み直します）</h2>
+  <div class="cfg">
+    <div class="grp"><label>女子チーム数</label><input id="cw" type="number" min="2" max="16"></div>
+    <div class="grp"><label>混合①チーム数</label><input id="cm1" type="number" min="0" max="16"></div>
+    <div class="grp"><label>混合②チーム数</label><input id="cm2" type="number" min="0" max="16"></div>
+    <div class="grp"><label>開始時刻</label><input id="cstart" type="time"></div>
+    <div class="grp"><label>1試合（分）</label><input id="cdur" type="number" min="5" max="60"></div>
+  </div>
+  <p class="note" id="cfgsummary" style="text-align:center"></p>
+</div>
+
+<div class="bar noprint">
+  <button onclick="window.print()">🖨 印刷（A4・コート毎）</button>
+  <button onclick="openResults()" style="background:var(--accent)">🏆 結果・順位アプリを開く</button>
+  <button onclick="exportData()">💾 データ保存</button>
+  <button onclick="document.getElementById('imp').click()">📂 データ読込</button>
+  <input id="imp" type="file" accept=".json,application/json" style="display:none">
+</div>
+
+<div class="legend">
+  <span><i class="sw" style="background:var(--w);border:1px solid var(--wb)"></i>女子（Aコート）</span>
+  <span><i class="sw" style="background:var(--m1);border:1px solid var(--m1b)"></i>混合①（Bコート）</span>
+  <span><i class="sw" style="background:var(--m2);border:1px solid var(--m2b)"></i>混合②（Cコート）</span>
+  <span><i class="sw" style="background:#fde3ee"></i>女子一斉（3コート使用）</span>
+</div>
+
+<details class="card noprint" id="namepanel" open>
+  <summary style="cursor:pointer;font-weight:700;color:var(--head);font-size:15px">✏️ チーム名を入力（クリックで開閉／結果アプリにも反映）</summary>
+  <div id="namegrid" style="display:flex;gap:20px;flex-wrap:wrap;margin-top:14px"></div>
+</details>
+
+<div class="card" id="schedcard">
+  <h2>進行表（画面用・全コートまとめ）</h2>
+  <div id="schedwrap" style="overflow-x:auto"></div>
+  <p class="note">※「審 N」＝そのコートで審判をするチーム番号（女子ソロはAの休みチーム、混合はそのリーグの休みチーム）。<br>
+  ※<b style="color:var(--accent)">女子一斉</b>の枠はA・B・C全部で女子。<b>審判は混合チームが担当</b>するので「審：混合」。一斉枠は3コートの終了時刻がそろうよう自動配置します。<br>
+  ※どこかのリーグが先に終わったら、空いたコートで残り試合を消化します。</p>
+</div>
+
+<div id="starwrap"></div>
+<p class="note" style="text-align:center">チーム名は上のパネルから入力できます。設定・名前は自動保存されます。</p>
+</div><!-- /screen -->
+
+<div id="printpages"></div>
+</div>
+<script>
+const CK='miracl_config_v1', NK='miracl_names_v2', RK='miracl_results_v2';
+const LEAGUES=[
+ {key:'w', name:'女子',   court:'コートA', color:'#e8407a', cell:'cw'},
+ {key:'m1',name:'混合①', court:'コートB', color:'#2f6fe0', cell:'cm1'},
+ {key:'m2',name:'混合②', court:'コートC', color:'#1f9d57', cell:'cm2'},
+];
+let cfg={w:8,m1:7,m2:7,start:'09:00',dur:25};
+try{Object.assign(cfg,JSON.parse(localStorage.getItem(CK))||{})}catch(e){}
+let names={}; try{names=JSON.parse(localStorage.getItem(NK))||{}}catch(e){}
+const k=(lg,t)=>lg+':'+t;
+const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+const nm=(lg,t)=>names[k(lg,t)]||(''+t);
+const fullnm=(lg,t)=>names[k(lg,t)]||('チーム'+t);
+const size=lg=>({w:cfg.w,m1:cfg.m1,m2:cfg.m2})[lg];
+
+/* ---- 総当たり生成 (サークル法) ---- */
+function roundRobin(n){
+  if(n<2) return [];
+  const arr=[]; for(let i=1;i<=n;i++)arr.push(i);
+  if(n%2)arr.push(0);
+  const m=arr.length, rounds=[];
+  let a=arr.slice();
+  for(let r=0;r<m-1;r++){
+    const rd=[];
+    for(let i=0;i<m/2;i++){const x=a[i],y=a[m-1-i]; if(x&&y)rd.push([x,y]);}
+    rounds.push(rd);
+    a=[a[0],a[m-1]].concat(a.slice(1,m-1));
+  }
+  return rounds;
+}
+const flat=n=>roundRobin(n).flat();
+
+/* ---- スケジュール構築 ---- */
+let slots=[];
+function buildSchedule(){
+  const N=cfg.w;
+  let womenLeft=flat(N).map(p=>p.slice());
+  const q1=flat(cfg.m1).map(p=>p.slice());
+  const q2=flat(cfg.m2).map(p=>p.slice());
+  const W=womenLeft.length, maxG=Math.max(q1.length,q2.length);
+  const simSize=Math.min(3,Math.floor(N/2));
+  let s=simSize>0?Math.max(0,Math.round((W-maxG)/simSize)):0;
+  if(simSize>0) s=Math.min(s,Math.floor(W/simSize));
+  const mainT=maxG+s;
+  const simAt=new Set();
+  for(let i=0;i<s;i++){let p=Math.floor((i+0.5)*mainT/Math.max(1,s)); while(simAt.has(p))p++; simAt.add(p);}
+  const last={}; for(let t=1;t<=N;t++)last[t]=-9;
+  const sortLeft=t=>womenLeft.sort((x,y)=>Math.max(last[x[0]],last[x[1]])-Math.max(last[y[0]],last[y[1]]));
+  function pickSim(kk,t){
+    sortLeft(t); const ch=[],used=new Set();
+    for(const m of womenLeft){ if(ch.length<kk&&!used.has(m[0])&&!used.has(m[1])){ch.push(m);used.add(m[0]);used.add(m[1]);} }
+    womenLeft=womenLeft.filter(m=>!ch.includes(m));
+    ch.forEach(([a,b])=>{last[a]=t;last[b]=t;});
+    return ch;
+  }
+  function pickSolo(t){
+    sortLeft(t); const m=womenLeft.shift();
+    if(m){last[m[0]]=t;last[m[1]]=t;}
+    return m||null;
+  }
+  slots=[]; let t=0, guard=0;
+  while(womenLeft.length||q1.length||q2.length){
+    if(guard++>800)break;
+    if(simAt.has(t)&&womenLeft.length>=2){
+      const ms=pickSim(simSize,t);
+      slots.push({sim:true,cells:[ms[0]?{lg:'w',m:ms[0]}:null,ms[1]?{lg:'w',m:ms[1]}:null,ms[2]?{lg:'w',m:ms[2]}:null]});
+    }else{
+      const b=q1.length?{lg:'m1',m:q1.shift()}:null;
+      const c=q2.length?{lg:'m2',m:q2.shift()}:null;
+      let a=null;
+      if(womenLeft.length){a={lg:'w',m:pickSolo(t)};}
+      else{
+        const steal=(q,other,lg)=>{for(let i=0;i<q.length;i++){const p=q[i];
+          if(!other||!(other.m[0]===p[0]||other.m[0]===p[1]||other.m[1]===p[0]||other.m[1]===p[1])){q.splice(i,1);return {lg,m:p};}}return null;};
+        if(q1.length>=q2.length) a=steal(q1,b,'m1')||steal(q2,c,'m2');
+        else a=steal(q2,c,'m2')||steal(q1,b,'m1');
+      }
+      if(!a&&!b&&!c)break;
+      slots.push({sim:false,cells:[a,b,c]});
+    }
+    t++;
+  }
+  /* ---- 審判割当 ---- */
+  const refCnt={w:{},m1:{},m2:{}};
+  slots.forEach(sl=>{
+    if(sl.sim){sl.cells.forEach(c=>{if(c)c.ref='mix';});return;}
+    const playing={w:new Set(),m1:new Set(),m2:new Set()};
+    sl.cells.forEach(c=>{if(c){playing[c.lg].add(c.m[0]);playing[c.lg].add(c.m[1]);}});
+    const usedRef={w:new Set(),m1:new Set(),m2:new Set()};
+    sl.cells.forEach(c=>{
+      if(!c)return;
+      const n=size(c.lg); let best=null,bestCnt=1e9;
+      for(let x=1;x<=n;x++){
+        if(playing[c.lg].has(x)||usedRef[c.lg].has(x))continue;
+        const cnt=refCnt[c.lg][x]||0;
+        if(cnt<bestCnt){bestCnt=cnt;best=x;}
+      }
+      if(best!=null){c.ref=best;usedRef[c.lg].add(best);refCnt[c.lg][best]=(refCnt[c.lg][best]||0)+1;}
+      else c.ref='';
+    });
+  });
+}
+
+/* ---- 表示ユーティリティ ---- */
+function timeOf(i){
+  const [h,m]=(cfg.start||'09:00').split(':').map(Number);
+  const tot=h*60+m+i*(+cfg.dur||25);
+  return String(Math.floor(tot/60)%24).padStart(2,'0')+':'+String(tot%60).padStart(2,'0');
+}
+function cellHTML(c){
+  if(!c)return '<td class="mt empty">—</td>';
+  const L=LEAGUES.find(l=>l.key===c.lg);
+  const ref=c.ref==='mix'?'<span class="ref free">審：混合</span>'
+    :c.ref===''?'<span class="ref">審 —</span>'
+    :`<span class="ref">審 <b>${esc(nm(c.lg,c.ref))}</b></span>`;
+  return `<td class="mt ${L.cell}">${esc(nm(c.lg,c.m[0]))}<span class="vs">対</span>${esc(nm(c.lg,c.m[1]))}<br>${ref}</td>`;
+}
+function renderSched(){
+  let rows='';
+  slots.forEach((sl,i)=>{
+    const tag=sl.sim?'<span class="badge">女子一斉</span>':'';
+    rows+=`<tr class="${sl.sim?'simrow':''}"><th class="slot">第${i+1}枠${tag}</th><td class="time">${timeOf(i)}</td>${cellHTML(sl.cells[0])}${cellHTML(sl.cells[1])}${cellHTML(sl.cells[2])}</tr>`;
+  });
+  document.getElementById('schedwrap').innerHTML=
+   `<table><thead><tr><th>枠</th><th>時刻</th><th class="colA">コートA<br><small>女子</small></th><th class="colB">コートB<br><small>混合①</small></th><th class="colC">コートC<br><small>混合②</small></th></tr></thead><tbody>${rows}</tbody></table>`;
+  const W=cfg.w*(cfg.w-1)/2, G1=cfg.m1*(cfg.m1-1)/2, G2=cfg.m2*(cfg.m2-1)/2;
+  document.getElementById('cfgsummary').innerHTML=
+   `試合数：女子 <b>${W}</b>・混合① <b>${G1}</b>・混合② <b>${G2}</b>（計 ${W+G1+G2}試合）／ 全<b>${slots.length}枠</b> ・ 終了目安 <b>${timeOf(slots.length)}</b>`;
+}
+function renderStars(){
+  let html='';
+  LEAGUES.forEach(L=>{
+    const n=size(L.key); if(n<2){return;}
+    let head=''; for(let t=1;t<=n;t++)head+=`<th class="gh">${esc(nm(L.key,t))}</th>`;
+    let body='';
+    for(let r=1;r<=n;r++){
+      let tds='';
+      for(let c=1;c<=n;c++)tds+= r===c?'<td class="diag"></td>':'<td class="gc"></td>';
+      body+=`<tr><th class="gh">${esc(nm(L.key,r))}</th>${tds}<td class="gc tot"></td><td class="gc rank"></td></tr>`;
+    }
+    html+=`<div class="card star-card"><h2 style="border-color:${L.color}">${L.name} 星取表（${n}チーム 総当たり）</h2><table class="star"><thead><tr><th class="gh corner"></th>${head}<th class="gh" style="width:8%">勝</th><th class="gh" style="width:9%">順位</th></tr></thead><tbody>${body}</tbody></table></div>`;
+  });
+  document.getElementById('starwrap').innerHTML=html;
+}
+function renderNames(){
+  document.getElementById('namegrid').innerHTML=LEAGUES.map(L=>{
+    const n=size(L.key); if(n<2)return '';
+    let inputs='';
+    for(let t=1;t<=n;t++){
+      const v=esc(names[k(L.key,t)]||'');
+      inputs+=`<div style="display:flex;align-items:center;gap:6px;margin-bottom:5px">
+        <span style="width:18px;text-align:right;color:${L.color};font-weight:700">${t}</span>
+        <input data-lg="${L.key}" data-t="${t}" value="${v}" placeholder="チーム${t}"
+        style="width:140px;padding:5px 7px;border:1px solid var(--line);border-radius:6px;font-size:13px"></div>`;
+    }
+    return `<div><div style="font-weight:700;color:${L.color};margin-bottom:8px;border-bottom:2px solid ${L.color};padding-bottom:3px">${L.name}</div>${inputs}</div>`;
+  }).join('');
+  document.querySelectorAll('#namegrid input').forEach(inp=>inp.addEventListener('input',()=>{
+    const key=k(inp.dataset.lg,inp.dataset.t), val=inp.value.trim();
+    if(val)names[key]=val; else delete names[key];
+    localStorage.setItem(NK,JSON.stringify(names));
+    renderSched();renderStars();renderPrint();
+  }));
+}
+/* ---- 印刷ページ (A4・コート毎) ---- */
+function renderPrint(){
+  let html='';
+  /* 1ページ目: タイトル+チーム名 */
+  html+='<div class="pp"><div class="pp-title"><div class="t1"><b>miracl</b>杯</div><div class="t2">'+
+    LEAGUES.map(L=>`${L.name} ${size(L.key)}チーム`).join(' ／ ')+`（1試合${cfg.dur}分・2セット）</div></div><div class="pn-grid">`+
+    LEAGUES.map(L=>{
+      const n=size(L.key); if(n<2)return '';
+      let list='';
+      for(let t=1;t<=n;t++)list+=`<div class="pn-row"><span class="pn-no" style="color:${L.color}">${t}</span><span class="pn-name">${esc(fullnm(L.key,t))}</span></div>`;
+      return `<div><div class="pn-head" style="border-color:${L.color};color:${L.color}">${L.name}</div>${list}</div>`;
+    }).join('')+'</div></div>';
+  /* コート毎ページ */
+  [0,1,2].forEach(ci=>{
+    const L=LEAGUES[ci];
+    let rows='';
+    slots.forEach((sl,i)=>{
+      const c=sl.cells[ci];
+      let cell,refc;
+      if(!c){cell='<td class="mt empty">—</td>';refc='<td class="ref">—</td>';}
+      else{
+        const CL=LEAGUES.find(x=>x.key===c.lg);
+        const other=c.lg!==L.key?` <small style="color:${CL.color};font-weight:700">[${CL.name}]</small>`:'';
+        cell=`<td class="mt ${CL.cell}">${esc(nm(c.lg,c.m[0]))}<span class="vs">対</span>${esc(nm(c.lg,c.m[1]))}${other}</td>`;
+        refc=c.ref==='mix'?'<td class="ref free">審：混合</td>'
+          :c.ref===''?'<td class="ref">—</td>'
+          :`<td class="ref"><b>${esc(nm(c.lg,c.ref))}</b>${c.lg!==L.key?'':''}</td>`;
+      }
+      const tag=sl.sim?'<span class="badge">女子一斉</span>':'';
+      rows+=`<tr class="${sl.sim?'simrow':''}"><th class="slot">第${i+1}枠${tag}</th><td class="time">${timeOf(i)}</td>${cell}${refc}</tr>`;
+    });
+    html+=`<div class="pp"><div class="cp-head" style="border-color:${L.color}">
+      <span class="cp-court" style="color:${L.color}">${L.court}<small style="font-size:15px;margin-left:8px;color:var(--ink)">基本：${L.name}</small></span>
+      <span class="cp-tour">miracl杯 進行表（1試合${cfg.dur}分）</span></div>
+      <table><thead><tr><th style="width:70px">枠</th><th style="width:60px">時刻</th><th>対戦</th><th style="width:110px">審判</th></tr></thead><tbody>${rows}</tbody></table>
+      <p class="note">※ピンク帯＝女子一斉枠（このコートも女子の試合・審判は混合チーム）。[混合①][混合②]表記はこのコートで消化する他リーグの試合。</p></div>`;
+  });
+  /* 星取表ページ */
+  LEAGUES.forEach(L=>{
+    const n=size(L.key); if(n<2)return;
+    let head=''; for(let t=1;t<=n;t++)head+=`<th class="gh">${esc(nm(L.key,t))}</th>`;
+    let body='';
+    for(let r=1;r<=n;r++){
+      let tds=''; for(let c=1;c<=n;c++)tds+= r===c?'<td class="diag"></td>':'<td class="gc"></td>';
+      body+=`<tr><th class="gh">${esc(nm(L.key,r))}</th>${tds}<td class="gc tot"></td><td class="gc rank"></td></tr>`;
+    }
+    html+=`<div class="pp"><div class="cp-head" style="border-color:${L.color}">
+      <span class="cp-court" style="color:${L.color}">${L.name} 星取表</span>
+      <span class="cp-tour">miracl杯（${n}チーム 総当たり）</span></div>
+      <table class="star"><thead><tr><th class="gh corner"></th>${head}<th class="gh" style="width:8%">勝</th><th class="gh" style="width:9%">順位</th></tr></thead><tbody>${body}</tbody></table></div>`;
+  });
+  document.getElementById('printpages').innerHTML=html;
+}
+/* ---- 設定 ---- */
+function bindCfg(){
+  const ids={cw:'w',cm1:'m1',cm2:'m2',cstart:'start',cdur:'dur'};
+  for(const id in ids){
+    const el=document.getElementById(id);
+    el.value=cfg[ids[id]];
+    el.addEventListener('input',()=>{
+      let v=el.value;
+      if(id!=='cstart'){v=parseInt(v,10); if(isNaN(v))return;}
+      if(id==='cw'&&(v<2||v>16))return;
+      if((id==='cm1'||id==='cm2')&&(v<0||v>16))return;
+      if(id==='cdur'&&(v<5||v>60))return;
+      cfg[ids[id]]=v;
+      localStorage.setItem(CK,JSON.stringify(cfg));
+      rebuild();
+    });
+  }
+}
+function rebuild(){buildSchedule();renderSched();renderStars();renderNames();renderPrint();}
+/* ---- 各種ボタン ---- */
+function openResults(){
+  const url=new URL('miracl-results.html', location.href).href;
+  const w=window.open(url,'miraclResults','width=820,height=900,scrollbars=yes,resizable=yes');
+  if(!w) alert('ポップアップがブロックされました。ブラウザのポップアップ許可をオンにするか、miracl-results.html を直接開いてください。');
+}
+function exportData(){
+  const data={config:cfg,
+    names:JSON.parse(localStorage.getItem(NK)||'{}'),
+    results:JSON.parse(localStorage.getItem(RK)||'{}')};
+  const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);
+  a.download='miracl杯-データ.json';a.click();URL.revokeObjectURL(a.href);
+}
+document.getElementById('imp').addEventListener('change',e=>{
+  const f=e.target.files[0];if(!f)return;const rd=new FileReader();
+  rd.onload=()=>{try{const d=JSON.parse(rd.result);
+    if(d.config)localStorage.setItem(CK,JSON.stringify(d.config));
+    if(d.names)localStorage.setItem(NK,JSON.stringify(d.names));
+    if(d.results)localStorage.setItem(RK,JSON.stringify(d.results));
+    alert('読み込みました');location.reload();
+  }catch(err){alert('このファイルは読み込めませんでした');}};rd.readAsText(f);
+});
+bindCfg();rebuild();
+</script></body></html>
