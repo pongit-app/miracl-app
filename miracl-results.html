@@ -36,6 +36,8 @@ thead th{background:var(--head);color:#fff;font-weight:600;font-size:12.5px}
 .bar{text-align:center;margin-bottom:14px}
 .bar button{background:var(--head);color:#fff;border:0;border-radius:8px;padding:8px 14px;font-size:13px;cursor:pointer;margin:3px 4px}
 .note{font-size:12px;color:var(--rest);margin-top:8px;line-height:1.7}
+.abtn{background:var(--head);color:#fff;border:0;border-radius:6px;padding:5px 10px;font-size:12px;cursor:pointer;margin:0 2px}
+.abtn.del{background:#c0392b}
 @page{size:A4 portrait;margin:0} /* 余白0でブラウザのURL/日付印字を消す */
 @media print{body{background:#fff;padding:12mm}.noprint{display:none}.card{box-shadow:none;page-break-inside:avoid}}
 </style></head><body><div class="wrap">
@@ -56,6 +58,7 @@ thead th{background:var(--head);color:#fff;font-weight:600;font-size:12.5px}
 </details>
 <div id="stand"></div>
 <div id="matches"></div>
+<div id="archwrap"></div>
 <p class="note">※各試合とも「1セット目」「2セット目」の両チームの得点を入力してください。両チームに値が入ったセットだけ集計します。<br>
 ※チーム数・チーム名は進行表アプリ（miracl-cup.html）の設定と共有。結果はこの端末に自動保存されます。</p>
 </div>
@@ -86,14 +89,17 @@ function roundRobin(n){
   }
   return rounds;
 }
-const pairsOf=lg=>roundRobin(size(lg)).flat();
+const sizeOf=(lg,C)=>({w:C.w,m1:C.m1,m2:C.m2})[lg];
+const pairsFor=(lg,C)=>roundRobin(sizeOf(lg,C)).flat();
+const pairsOf=lg=>pairsFor(lg,cfg);
 const rkey=(lg,p)=>lg+':'+Math.min(p[0],p[1])+'-'+Math.max(p[0],p[1]);
 
-function calc(lg){
-  const n=size(lg); const st={};
+function calc(lg){return calc2(lg,cfg,results);}
+function calc2(lg,C,R){
+  const n=sizeOf(lg,C); const st={};
   for(let t=1;t<=n;t++)st[t]={t,g:0,w:0,d:0,l:0,sw:0,sl:0,pf:0,pa:0};
-  pairsOf(lg).forEach(pr=>{
-    const r=results[rkey(lg,pr)];if(!r)return;
+  pairsFor(lg,C).forEach(pr=>{
+    const r=R[rkey(lg,pr)];if(!r)return;
     const [a,b]=pr;let sA=0,sB=0,played=false;
     [[r.s1a,r.s1b],[r.s2a,r.s2b]].forEach(([x,y])=>{
       if(x===''||y===''||x==null||y==null)return;
@@ -121,8 +127,9 @@ function calc(lg){
   });
   return arr;
 }
-function renderStand(){
-  const L=LEAGUES.find(l=>l.key===cur);const arr=calc(cur);
+function standCardHTML(lg,C,N,R){
+  const L=LEAGUES.find(l=>l.key===lg);const arr=calc2(lg,C,R);
+  const gname=t=>esc(N[lg+':'+t]||(''+t));
   const medal=r=>r===1?'🥇':r===2?'🥈':r===3?'🥉':'';
   let rows='';
   arr.forEach(row=>{
@@ -131,16 +138,19 @@ function renderStand(){
     const cls=row._rank===1?'r1':row._rank===2?'r2':row._rank===3?'r3':'';
     rows+=`<tr class="${cls}">
       <td class="rank"><span class="medal">${medal(row._rank)}</span>${row._rank}</td>
-      <td class="tname">${esc(nm(cur,row.t))}</td>
+      <td class="tname">${gname(row.t)}</td>
       <td>${row.g}</td><td class="small">${row.w}-${row.d}-${row.l}</td>
       <td style="font-weight:700">${row.sw}</td>
       <td>${row.pf}</td><td>${row.pa}</td>
       <td class="${dc}">${d>0?'+':''}${d}</td></tr>`;
   });
-  document.getElementById('stand').innerHTML=`<div class="card"><h2 style="border-color:${L.color}">${L.name} 順位表（${size(cur)}チーム）</h2>
+  return `<div class="card"><h2 style="border-color:${L.color}">${L.name} 順位表（${sizeOf(lg,C)}チーム）</h2>
     <table><thead><tr><th>順位</th><th>チーム</th><th>試合</th><th>勝分敗</th><th>獲得<br>セット</th><th>得点</th><th>失点</th><th>得失差</th></tr></thead>
     <tbody>${rows}</tbody></table>
-    <p class="note">並び順：獲得セット数の多い順 → 同じなら得失点差の大きい順（さらに同じなら得点→チーム番号）。🥇🥈🥉は現時点の上位3。</p></div>`;
+    <p class="note">並び順：獲得セット数の多い順 → 同じなら得失点差の大きい順（さらに同じなら得点→チーム番号）。🥇🥈🥉は上位3。</p></div>`;
+}
+function renderStand(){
+  document.getElementById('stand').innerHTML=standCardHTML(cur,cfg,names,results);
 }
 function renderMatches(){
   const L=LEAGUES.find(l=>l.key===cur);const prs=pairsOf(cur);
@@ -205,7 +215,8 @@ function clearLeague(){
 }
 function exportData(){
   const data={config:cfg,names:JSON.parse(localStorage.getItem(NK)||'{}'),
-    results:JSON.parse(localStorage.getItem(RK)||'{}')};
+    results:JSON.parse(localStorage.getItem(RK)||'{}'),
+    archive:JSON.parse(localStorage.getItem(AK)||'[]')};
   const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
   const a=document.createElement('a');a.href=URL.createObjectURL(blob);
   a.download='miracl杯-データ.json';a.click();URL.revokeObjectURL(a.href);
@@ -216,16 +227,73 @@ document.getElementById('imp').addEventListener('change',e=>{
     if(d.config)localStorage.setItem(CK,JSON.stringify(d.config));
     if(d.names)localStorage.setItem(NK,JSON.stringify(d.names));
     if(d.results)localStorage.setItem(RK,JSON.stringify(d.results));
+    if(d.archive)localStorage.setItem(AK,JSON.stringify(d.archive));
     alert('読み込みました');location.reload();
   }catch(err){alert('このファイルは読み込めませんでした');}};rd.readAsText(f);
 });
+/* ---- 過去の戦績アーカイブ ---- */
+const AK='miracl_archive_v1';
+let archive=[]; try{archive=JSON.parse(localStorage.getItem(AK))||[]}catch(e){}
+let viewIdx=null;
+function saveArchive(){localStorage.setItem(AK,JSON.stringify(archive));}
+function snapshotIfAny(){
+  const res=JSON.parse(localStorage.getItem(RK)||'{}');
+  if(Object.keys(res).length===0)return false;
+  const def='miracl杯 '+new Date().toLocaleDateString('ja-JP');
+  const name=prompt('この大会の戦績を「過去の戦績」に残します。\nアーカイブ名（大会名など）:',def);
+  archive.push({name:(name&&name.trim())||def, savedAt:new Date().toISOString(),
+    config:JSON.parse(localStorage.getItem(CK)||'{}'),
+    names:JSON.parse(localStorage.getItem(NK)||'{}'), results:res});
+  saveArchive();
+  return true;
+}
+function renderArchive(){
+  let html='';
+  if(archive.length){
+    let rows='';
+    archive.forEach((a,i)=>{
+      const d=new Date(a.savedAt).toLocaleDateString('ja-JP');
+      rows+=`<tr><td class="tname">${esc(a.name)}</td><td class="small">${d}</td>
+        <td><button class="abtn" onclick="viewArchive(${i})">📖 見る</button>
+        <button class="abtn del" onclick="delArchive(${i})">削除</button></td></tr>`;
+    });
+    html=`<div class="card"><h2 style="border-color:#8a6bd1">📚 過去の戦績</h2>
+      <table><thead><tr><th>大会</th><th>保存日</th><th></th></tr></thead><tbody>${rows}</tbody></table>
+      <p class="note">「🗑 全データクリア」時に自動保存された戦績です。ここは全データクリアでも消えません。</p></div>`;
+  }
+  document.getElementById('archwrap').innerHTML=html;
+}
+function viewArchive(i){viewIdx=i;renderAll();window.scrollTo(0,0);}
+function backCurrent(){viewIdx=null;renderAll();}
+function delArchive(i){
+  if(!confirm(`「${archive[i].name}」の戦績を削除します。元に戻せません。よろしいですか？`))return;
+  archive.splice(i,1);saveArchive();
+  if(viewIdx===i)viewIdx=null; else if(viewIdx>i)viewIdx--;
+  renderAll();
+}
 function clearAll(){
-  if(!confirm('全データ（チーム名・試合結果・大会設定）を消して初期状態に戻します。\n必要なら先に「💾 データ保存」でバックアップしてください。\n\n本当にクリアしますか？'))return;
+  if(!confirm('全データ（チーム名・試合結果・大会設定）を消して初期状態に戻します。\n※試合結果が入っていれば、戦績は「📚 過去の戦績」に自動で残ります。\n\nクリアしますか？'))return;
   if(!confirm('この操作は元に戻せません。本当によろしいですか？'))return;
+  snapshotIfAny();
   [CK,NK,RK,'miracl_results_v1'].forEach(k2=>localStorage.removeItem(k2));
-  alert('全データをクリアしました');
+  alert('クリアしました（戦績はアーカイブに保存済み）');
   location.reload();
 }
-function renderAll(){renderTabs();renderNamePanel();renderStand();renderMatches();}
+function renderAll(){
+  if(viewIdx!=null&&archive[viewIdx]){
+    const a=archive[viewIdx];
+    document.getElementById('tabs').innerHTML='';
+    document.getElementById('stand').innerHTML=
+      `<div class="card" style="background:#f5f0ff;border-color:#c9b8ef">
+        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
+        <b style="font-size:16px;color:#5b3fa8">📚 ${esc(a.name)}（${new Date(a.savedAt).toLocaleDateString('ja-JP')}保存）</b>
+        <button class="abtn" style="font-size:14px" onclick="backCurrent()">← 現在の大会に戻る</button></div></div>`+
+      LEAGUES.filter(l=>sizeOf(l.key,a.config)>=2).map(l=>standCardHTML(l.key,a.config,a.names,a.results)).join('');
+    document.getElementById('matches').innerHTML='';
+    renderArchive();
+    return;
+  }
+  renderTabs();renderNamePanel();renderStand();renderMatches();renderArchive();
+}
 renderAll();
 </script></body></html>

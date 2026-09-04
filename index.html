@@ -437,7 +437,8 @@ function openResults(){
 function exportData(){
   const data={config:cfg,
     names:JSON.parse(localStorage.getItem(NK)||'{}'),
-    results:JSON.parse(localStorage.getItem(RK)||'{}')};
+    results:JSON.parse(localStorage.getItem(RK)||'{}'),
+    archive:JSON.parse(localStorage.getItem('miracl_archive_v1')||'[]')};
   const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
   const a=document.createElement('a');a.href=URL.createObjectURL(blob);
   a.download='miracl杯-データ.json';a.click();URL.revokeObjectURL(a.href);
@@ -448,14 +449,26 @@ document.getElementById('imp').addEventListener('change',e=>{
     if(d.config)localStorage.setItem(CK,JSON.stringify(d.config));
     if(d.names)localStorage.setItem(NK,JSON.stringify(d.names));
     if(d.results)localStorage.setItem(RK,JSON.stringify(d.results));
+    if(d.archive)localStorage.setItem('miracl_archive_v1',JSON.stringify(d.archive));
     alert('読み込みました');location.reload();
   }catch(err){alert('このファイルは読み込めませんでした');}};rd.readAsText(f);
 });
 function clearAll(){
-  if(!confirm('全データ（チーム名・試合結果・大会設定）を消して初期状態に戻します。\n必要なら先に「💾 データ保存」でバックアップしてください。\n\n本当にクリアしますか？'))return;
+  if(!confirm('全データ（チーム名・試合結果・大会設定）を消して初期状態に戻します。\n※試合結果が入っていれば、戦績は結果アプリの「📚 過去の戦績」に自動で残ります。\n\nクリアしますか？'))return;
   if(!confirm('この操作は元に戻せません。本当によろしいですか？'))return;
+  const AK='miracl_archive_v1';
+  const res=JSON.parse(localStorage.getItem(RK)||'{}');
+  if(Object.keys(res).length){
+    const def='miracl杯 '+new Date().toLocaleDateString('ja-JP');
+    const name=prompt('アーカイブ名（大会名など）:',def);
+    let arc=[]; try{arc=JSON.parse(localStorage.getItem(AK))||[]}catch(e){}
+    arc.push({name:(name&&name.trim())||def, savedAt:new Date().toISOString(),
+      config:JSON.parse(localStorage.getItem(CK)||'{}'),
+      names:JSON.parse(localStorage.getItem(NK)||'{}'), results:res});
+    localStorage.setItem(AK,JSON.stringify(arc));
+  }
   [CK,NK,RK,'miracl_results_v1'].forEach(k2=>localStorage.removeItem(k2));
-  alert('全データをクリアしました');
+  alert('クリアしました（戦績はアーカイブに保存済み）');
   location.reload();
 }
 bindCfg();rebuild();
