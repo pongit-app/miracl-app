@@ -169,9 +169,9 @@ function buildSchedule(){
   const simSize=Math.min(3,Math.floor(N/2));
   let s=simSize>0?Math.max(0,Math.round((W-maxG)/simSize)):0;
   if(simSize>0) s=Math.min(s,Math.floor(W/simSize));
-  const mainT=maxG+s;
+  /* 女子は試合が長いので、一斉枠は大会の最初にまとめて消化する */
   const simAt=new Set();
-  for(let i=0;i<s;i++){let p=Math.floor((i+0.5)*mainT/Math.max(1,s)); while(simAt.has(p))p++; simAt.add(p);}
+  for(let i=0;i<s;i++)simAt.add(i);
   const last={}; for(let t=1;t<=N;t++)last[t]=-9;
   const sortLeft=t=>womenLeft.sort((x,y)=>Math.max(last[x[0]],last[x[1]])-Math.max(last[y[0]],last[y[1]]));
   function pickSim(kk,t){
