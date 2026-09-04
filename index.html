@@ -72,7 +72,35 @@ thead th{background:var(--head);color:#fff;font-weight:600;font-size:13px}
  .pp .ref{font-size:11px}
  .pp .note{font-size:11px;line-height:1.6}
  .star .gc{height:44px}
+ body.cards-mode #printpages{display:none}
+ body.cards-mode #printcards{display:block}
 }
+/* ===== 対戦カード (A4に同一カード2部 → 切ってA5) ===== */
+#printcards{display:none}
+.cardpage{height:272mm;display:flex;flex-direction:column;page-break-after:always}
+.chalf{height:132mm;padding:6mm 8mm 0;display:flex;flex-direction:column}
+.cutline{flex:0 0 auto;border-top:2px dashed #aab;position:relative;margin:2mm 0}
+.cutline::before{content:"✂";position:absolute;left:4mm;top:-3.4mm;color:#99a;font-size:14px;background:#fff;padding:0 3px}
+.ch-top{display:flex;justify-content:space-between;align-items:baseline;border-bottom:2px solid var(--head);padding-bottom:2mm}
+.ch-brand{font-size:15px;font-weight:800;color:var(--head)}
+.ch-brand b{color:var(--accent)}
+.ch-meta{font-size:14px;font-weight:800}
+.ch-meta2{font-size:12px;color:var(--rest)}
+.ch-vs{display:flex;align-items:center;justify-content:center;gap:8mm;margin:5mm 0 3mm}
+.ch-vs .t{font-size:24px;font-weight:800;color:var(--ink);max-width:62mm;text-align:center;line-height:1.25}
+.ch-vs .vs{font-size:15px;color:var(--accent);font-weight:700}
+.ch-ref{text-align:center;font-size:13px;color:var(--ink);margin-bottom:3mm}
+.ch-ref b{font-size:15px}
+table.ch-score{width:100%;border-collapse:collapse;table-layout:fixed}
+.ch-score th,.ch-score td{border:1.5px solid var(--head);text-align:center}
+.ch-score thead th{background:var(--head);color:#fff;font-size:13px;padding:2.2mm 2mm}
+.ch-score thead th:first-child{width:30mm;background:#fff}
+.ch-score tbody th{background:#eef2fb;color:var(--head);font-size:12px;padding:2mm}
+.ch-score tbody td{height:12mm;font-size:16px;background:#fff}
+.ch-score tr.sc th{background:#fbeef4}
+.ch-sign{display:flex;justify-content:space-between;gap:8mm;margin-top:5mm;font-size:13px;color:var(--ink)}
+.ch-sign>span{flex:1;display:flex;align-items:flex-end;gap:2mm;white-space:nowrap}
+.ch-sign .line{flex:1;border-bottom:1.5px solid var(--ink);min-width:30mm;height:7mm}
 </style></head><body>
 <div class="wrap">
 <div id="screen">
@@ -93,6 +121,7 @@ thead th{background:var(--head);color:#fff;font-weight:600;font-size:13px}
 
 <div class="bar noprint">
   <button onclick="window.print()">🖨 印刷（A4・コート毎）</button>
+  <button onclick="printCards()">🎫 対戦カード印刷（A4に2部→A5）</button>
   <button onclick="openResults()" style="background:var(--accent)">🏆 結果・順位アプリを開く</button>
   <button onclick="exportData()">💾 データ保存</button>
   <button onclick="document.getElementById('imp').click()">📂 データ読込</button>
@@ -124,6 +153,7 @@ thead th{background:var(--head);color:#fff;font-weight:600;font-size:13px}
 </div><!-- /screen -->
 
 <div id="printpages"></div>
+<div id="printcards"></div>
 </div>
 <script>
 const CK='miracl_config_v1', NK='miracl_names_v2', RK='miracl_results_v2';
@@ -343,6 +373,41 @@ function renderPrint(){
   });
   document.getElementById('printpages').innerHTML=html;
 }
+/* ---- 対戦カード (1試合=A4に2部、切ってA5) ---- */
+function renderCards(){
+  const counter={w:0,m1:0,m2:0};
+  let html='';
+  slots.forEach((sl,i)=>{
+    sl.cells.forEach((c,ci)=>{
+      if(!c)return;
+      const L=LEAGUES.find(l=>l.key===c.lg);
+      counter[c.lg]++;
+      const court=['コートA','コートB','コートC'][ci];
+      const refTxt=c.ref==='mix'?'混合チーム':(c.ref===''?'（当日決定）':esc(fullnm(c.lg,c.ref)));
+      const half=`<div class="chalf">
+        <div class="ch-top"><span class="ch-brand"><b>miracl</b>杯 対戦カード</span>
+          <span class="ch-meta" style="color:${L.color}">${L.name} 第${counter[c.lg]}試合</span>
+          <span class="ch-meta2">${court}・第${i+1}枠・${timeOf(i)}〜</span></div>
+        <div class="ch-vs"><span class="t">${esc(fullnm(c.lg,c.m[0]))}</span><span class="vs">対</span><span class="t">${esc(fullnm(c.lg,c.m[1]))}</span></div>
+        <div class="ch-ref">審判チーム：<b>${refTxt}</b></div>
+        <table class="ch-score"><thead><tr><th></th><th>${esc(fullnm(c.lg,c.m[0]))}</th><th>${esc(fullnm(c.lg,c.m[1]))}</th></tr></thead>
+        <tbody><tr><th>1セット目</th><td></td><td></td></tr>
+        <tr><th>2セット目</th><td></td><td></td></tr>
+        <tr class="sc"><th>セットカウント</th><td></td><td></td></tr></tbody></table>
+        <div class="ch-sign"><span>主審サイン：<span class="line"></span></span><span>勝者チームサイン：<span class="line"></span></span></div>
+      </div>`;
+      html+=`<div class="cardpage">${half}<div class="cutline"></div>${half}</div>`;
+    });
+  });
+  document.getElementById('printcards').innerHTML=html;
+}
+function printCards(){
+  renderCards();
+  document.body.classList.add('cards-mode');
+  const cleanup=()=>{document.body.classList.remove('cards-mode');window.removeEventListener('afterprint',cleanup);};
+  window.addEventListener('afterprint',cleanup);
+  window.print();
+}
 /* ---- 設定 ---- */
 function bindCfg(){
   const ids={cw:'w',cm1:'m1',cm2:'m2',cstart:'start',cdur:'dur'};
@@ -386,4 +451,5 @@ document.getElementById('imp').addEventListener('change',e=>{
   }catch(err){alert('このファイルは読み込めませんでした');}};rd.readAsText(f);
 });
 bindCfg();rebuild();
+if(location.search.indexOf('cards')>=0){renderCards();document.body.classList.add('cards-mode');}
 </script></body></html>
