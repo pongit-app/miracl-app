@@ -47,12 +47,12 @@ thead th{background:var(--head);color:#fff;font-weight:600;font-size:13px}
 .cfg .grp{text-align:center}
 /* ===== 印刷: A4・コート毎 ===== */
 #printpages{display:none}
-@page{size:A4 portrait;margin:11mm}
+@page{size:A4 portrait;margin:0} /* 余白0でブラウザのURL/日付印字を消す。余白はページ内側で確保 */
 @media print{
  body{background:#fff;padding:0}
  #screen{display:none}
  #printpages{display:block}
- .pp{page-break-after:always}
+ .pp{page-break-after:always;padding:12mm 12mm 8mm}
  .pp:last-child{page-break-after:auto}
  tr{page-break-inside:avoid}thead{display:table-header-group}
  .pp-title{ text-align:center;margin-top:30mm}
@@ -77,8 +77,8 @@ thead th{background:var(--head);color:#fff;font-weight:600;font-size:13px}
 }
 /* ===== 対戦カード (A4に同一カード2部 → 切ってA5) ===== */
 #printcards{display:none}
-.cardpage{height:272mm;display:flex;flex-direction:column;page-break-after:always}
-.chalf{height:132mm;padding:6mm 8mm 0;display:flex;flex-direction:column}
+.cardpage{height:296mm;padding:8mm 11mm;display:flex;flex-direction:column;page-break-after:always}
+.chalf{height:136mm;padding:6mm 8mm 0;display:flex;flex-direction:column}
 .cutline{flex:0 0 auto;border-top:2px dashed #aab;position:relative;margin:2mm 0}
 .cutline::before{content:"✂";position:absolute;left:4mm;top:-3.4mm;color:#99a;font-size:14px;background:#fff;padding:0 3px}
 .ch-top{display:flex;justify-content:space-between;align-items:baseline;border-bottom:2px solid var(--head);padding-bottom:2mm}
