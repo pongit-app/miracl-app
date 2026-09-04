@@ -125,6 +125,7 @@ table.ch-score{width:100%;border-collapse:collapse;table-layout:fixed}
   <button onclick="openResults()" style="background:var(--accent)">🏆 結果・順位アプリを開く</button>
   <button onclick="exportData()">💾 データ保存</button>
   <button onclick="document.getElementById('imp').click()">📂 データ読込</button>
+  <button onclick="clearAll()" style="background:#c0392b">🗑 全データクリア</button>
   <input id="imp" type="file" accept=".json,application/json" style="display:none">
 </div>
 
@@ -450,6 +451,13 @@ document.getElementById('imp').addEventListener('change',e=>{
     alert('読み込みました');location.reload();
   }catch(err){alert('このファイルは読み込めませんでした');}};rd.readAsText(f);
 });
+function clearAll(){
+  if(!confirm('全データ（チーム名・試合結果・大会設定）を消して初期状態に戻します。\n必要なら先に「💾 データ保存」でバックアップしてください。\n\n本当にクリアしますか？'))return;
+  if(!confirm('この操作は元に戻せません。本当によろしいですか？'))return;
+  [CK,NK,RK,'miracl_results_v1'].forEach(k2=>localStorage.removeItem(k2));
+  alert('全データをクリアしました');
+  location.reload();
+}
 bindCfg();rebuild();
 if(location.search.indexOf('cards')>=0){renderCards();document.body.classList.add('cards-mode');}
 </script></body></html>

@@ -48,6 +48,7 @@ thead th{background:var(--head);color:#fff;font-weight:600;font-size:12.5px}
   <button onclick="document.getElementById('imp').click()">📂 データ読込</button>
   <input id="imp" type="file" accept=".json,application/json" style="display:none">
   <button onclick="clearLeague()">このリーグの結果をクリア</button>
+  <button onclick="clearAll()" style="background:#c0392b">🗑 全データクリア</button>
 </div>
 <details class="card noprint" id="namepanel">
   <summary style="cursor:pointer;font-weight:700;color:var(--head);font-size:15px">✏️ チーム名を入力（クリックで開閉／進行表アプリと共有）</summary>
@@ -218,6 +219,13 @@ document.getElementById('imp').addEventListener('change',e=>{
     alert('読み込みました');location.reload();
   }catch(err){alert('このファイルは読み込めませんでした');}};rd.readAsText(f);
 });
+function clearAll(){
+  if(!confirm('全データ（チーム名・試合結果・大会設定）を消して初期状態に戻します。\n必要なら先に「💾 データ保存」でバックアップしてください。\n\n本当にクリアしますか？'))return;
+  if(!confirm('この操作は元に戻せません。本当によろしいですか？'))return;
+  [CK,NK,RK,'miracl_results_v1'].forEach(k2=>localStorage.removeItem(k2));
+  alert('全データをクリアしました');
+  location.reload();
+}
 function renderAll(){renderTabs();renderNamePanel();renderStand();renderMatches();}
 renderAll();
 </script></body></html>
