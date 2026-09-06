@@ -42,7 +42,7 @@ thead th{background:var(--head);color:#fff;font-weight:600;font-size:12.5px}
 @media print{body{background:#fff;padding:12mm}.noprint{display:none}.card{box-shadow:none;page-break-inside:avoid}}
 </style></head><body><div class="wrap">
 <h1 class="title"><b>miracl</b>杯 <span style="font-size:20px">結果・順位</span></h1>
-<p class="sub">2セット制 ／ 順位は「① 獲得セット数 → ② 得失点差」で自動計算 ／ チーム数は進行表アプリの設定に連動</p>
+<p class="sub">2セット制 ／ 順位は「① 獲得セット数 → ② 直接対決 → ③ 得失点差」で自動計算 ／ チーム数は進行表アプリの設定に連動</p>
 <div class="tabs" id="tabs"></div>
 <div class="bar noprint">
   <button onclick="window.print()">🖨 順位表を印刷/PDF</button>
@@ -96,7 +96,7 @@ const rkey=(lg,p)=>lg+':'+Math.min(p[0],p[1])+'-'+Math.max(p[0],p[1]);
 
 function calc(lg){return calc2(lg,cfg,results);}
 function calc2(lg,C,R){
-  const n=sizeOf(lg,C); const st={};
+  const n=sizeOf(lg,C); const st={}; const hh={};
   for(let t=1;t<=n;t++)st[t]={t,g:0,w:0,d:0,l:0,sw:0,sl:0,pf:0,pa:0};
   pairsFor(lg,C).forEach(pr=>{
     const r=R[rkey(lg,pr)];if(!r)return;
@@ -110,17 +110,37 @@ function calc2(lg,C,R){
     });
     if(!played)return;
     st[a].g++;st[b].g++;
+    hh[rkey(lg,pr)]={a,b,sa:sA,sb:sB};
     if(sA>sB){st[a].w++;st[b].l++;}
     else if(sB>sA){st[b].w++;st[a].l++;}
     else{st[a].d++;st[b].d++;}
   });
+  /* 直接対決: t1が勝っていればt1、t2ならt2、引き分け/未実施は0 */
+  const dir=(t1,t2)=>{
+    const m=hh[lg+':'+Math.min(t1,t2)+'-'+Math.max(t1,t2)];
+    if(!m)return 0;
+    const s1=m.a===t1?m.sa:m.sb, s2=m.a===t1?m.sb:m.sa;
+    return s1>s2?t1:(s2>s1?t2:0);
+  };
+  /* ①セット数 → (②は後段) → ③得失点差 → 得点 → チーム番号 で仮ソート */
   const arr=Object.values(st);
   arr.sort((x,y)=>(y.sw-x.sw)||((y.pf-y.pa)-(x.pf-x.pa))||(y.pf-x.pf)||(x.t-y.t));
+  /* ②セット数が同じ2チームは直接対決の勝者を上に(3チーム以上の同数は得失点差のまま) */
+  let i=0;
+  while(i<arr.length){
+    let j=i; while(j<arr.length&&arr[j].sw===arr[i].sw)j++;
+    if(j-i===2){
+      const w=dir(arr[i].t,arr[i+1].t);
+      if(w===arr[i+1].t){const tmp=arr[i];arr[i]=arr[i+1];arr[i+1]=tmp;}
+    }
+    i=j;
+  }
+  /* 順位番号: セット数同じ・直接対決で決まらず・得失点差も同じ → 同順位 */
   let rank=1;
   arr.forEach((row,idx)=>{
     if(idx>0){
       const p=arr[idx-1];
-      const same=(p.sw===row.sw)&&((p.pf-p.pa)===(row.pf-row.pa));
+      const same=(p.sw===row.sw)&&(dir(p.t,row.t)===0)&&((p.pf-p.pa)===(row.pf-row.pa));
       rank=same?p._rank:idx+1;
     }
     row._rank=rank;
@@ -147,7 +167,7 @@ function standCardHTML(lg,C,N,R){
   return `<div class="card"><h2 style="border-color:${L.color}">${L.name} 順位表（${sizeOf(lg,C)}チーム）</h2>
     <table><thead><tr><th>順位</th><th>チーム</th><th>試合</th><th>勝分敗</th><th>獲得<br>セット</th><th>得点</th><th>失点</th><th>得失差</th></tr></thead>
     <tbody>${rows}</tbody></table>
-    <p class="note">並び順：獲得セット数の多い順 → 同じなら得失点差の大きい順（さらに同じなら得点→チーム番号）。🥇🥈🥉は上位3。</p></div>`;
+    <p class="note">並び順：① 獲得セット数の多い順 → ② セット数が同じ2チームは<b>直接対決の勝者が上</b> → ③ 得失点差の大きい順（さらに同じなら得点→チーム番号）。<br>※セット数が同じチームが3つ以上並んだ場合と、直接対決が引き分け（1-1）の場合は得失点差で決めます。🥇🥈🥉は上位3。</p></div>`;
 }
 function renderStand(){
   document.getElementById('stand').innerHTML=standCardHTML(cur,cfg,names,results);
